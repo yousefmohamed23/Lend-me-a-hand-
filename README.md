@@ -29,7 +29,7 @@ Goals :
     
 Strategy: 
 
-    The project will be implemented using PYTHOpenCV , It will
+    The project will be implemented using ##Python OpenCV , It will
     be divided into four parts:
 
         ▪ GUI : A desktop application will be made for interactions so that the program would be userfriendly.
