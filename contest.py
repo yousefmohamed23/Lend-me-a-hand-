@@ -8,13 +8,14 @@ def removeBG(image):
     fgmask = cv2.erode(fgmask, kernel, iterations=1)
     res = cv2.bitwise_and(image, image, mask=fgmask)
     return res
-# Applying operations on captured frame to get hand
 if isBgCaptured == 1:  # this part wont run until background captured
-img = removeBG(frame)
-img = img[0:int(capturingBGregionY * frame.shape[0]),int(capturingBGregionX * frame.shape[1]):frame.shape[1]]  # clip the ROI
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-blur = cv2.GaussianBlur(gray, (blurValue, blurValue), 0)
-ret, thresh = cv2.threshold(blur, threshold, 255, cv2.THRESH_BINARY)
+
+            # Applying operations on captured frame to get hand
+            img = removeBG(frame)
+            img = img[0:int(capturingBGregionY * frame.shape[0]),int(capturingBGregionX * frame.shape[1]):frame.shape[1]]  # clip the ROI
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            blur = cv2.GaussianBlur(gray, (blurValue, blurValue), 0)
+            ret, thresh = cv2.threshold(blur, threshold, 255, cv2.THRESH_BINARY)
 #driver function
 
 #Keyboard Oprations
