@@ -37,6 +37,14 @@ cv2.createTrackbar('trh1', 'trackbar', threshold, 100, printThreshold)
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (blurValue, blurValue), 0)
             ret, thresh = cv2.threshold(blur, threshold, 255, cv2.THRESH_BINARY)
+            if cv2.countNonZero(thresh) != 0:
+		nz = np.argwhere(thresh)
+		Y, X = nz[0]
+		y, x = np.argwhere(nz > 128)[0]
+		highest_point_image = cv2.circle(thresh, (X, Y), 5, white, -1)
+		cv2.imshow('ori', highest_point_image)
+	
+
 	#driver function
 
 	#Keyboard Oprations
