@@ -81,6 +81,34 @@ cv2.createTrackbar('trh1', 'trackbar', threshold, 100, printThreshold)
 	frame = cv2.rectangle(frame, (x1 + 230, 50), (x1 + 280, 70), colors[3], -1)
 	# Aligning the point from the mask with thenactual video capture
 	center = (X + int(capturingBGregionX * frame.shape[1]), Y + 10)
+	if cnt == 0: 
+		
+	# draw only if the pointer finger is raised
+        # if the user pointer in the interface area
+         # if the user pointer in the interface area
+                if center[1] <= 70:
+			
+                    #clear all area
+                    if x1 <= center[0] <= x1 + 40: 
+				# Clear All
+                        bpoints = [deque(maxlen=512)]
+                        gpoints = [deque(maxlen=512)]
+                        rpoints = [deque(maxlen=512)]
+                        ypoints = [deque(maxlen=512)]
+
+                        bindex = 0
+                        gindex = 0
+                        rindex = 0
+                        yindex = 0
+                    # colors area
+                    elif x1 + 50 <= center[0] <= x1 + 100:
+                        colorIndex = 0  # Blue
+                    elif x1 + 110 <= center[0] <= x1 + 160:
+                        colorIndex = 1  # Green
+                    elif x1 + 170 <= center[0] <= x1 + 220:
+                        colorIndex = 2  # Red
+                    elif x1 + 230 <= center[0] <= x1 + 280:
+                        colorIndex = 3  # Yellow           
 
 
 	
