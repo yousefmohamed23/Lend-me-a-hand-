@@ -43,6 +43,31 @@ cv2.createTrackbar('trh1', 'trackbar', threshold, 100, printThreshold)
 		y, x = np.argwhere(nz > 128)[0]
 		highest_point_image = cv2.circle(thresh, (X, Y), 5, white, -1)
 		cv2.imshow('ori', highest_point_image)
+	thresh1 = copy.deepcopy(thresh)
+        # Getting contours of hand
+        _, contours, hierarchy = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        length = len(contours)
+        maxArea = -1
+        if length > 0:
+	    for i in range(length):  # find the biggest contour (according to area)
+                temp = contours[i]
+                area = cv2.contourArea(temp)
+                if area > maxArea:
+                    maxArea = area
+                    ci = i
+
+            res = contours[ci]
+            hull = cv2.convexHull(res)
+            drawing = np.zeros(img.shape, np.uint8)
+            cv2.drawContours(drawing, [res], 0, (0, 255, 0), 2)
+            cv2.drawContours(drawing, [hull], 0, (0, 0, 255), 3)
+
+	    isFinishCal, cnt = calculateFingers(res, drawing)
+            if triggerSwitch is True:
+                if isFinishCal is True and cnt <= 2:
+                    print(cnt) #number of fingers that is present in frame
+        cv2.imshow('output', drawing)
+
 	
 
 	#driver function
