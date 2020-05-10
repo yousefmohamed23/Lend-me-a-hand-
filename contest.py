@@ -67,6 +67,21 @@ cv2.createTrackbar('trh1', 'trackbar', threshold, 100, printThreshold)
                 if isFinishCal is True and cnt <= 2:
                     print(cnt) #number of fingers that is present in frame
         cv2.imshow('output', drawing)
+	 # paint interface
+    	paintWindow = np.zeros((471, 636, 3)) + 255
+    	cv2.namedWindow('Paint', cv2.WINDOW_AUTOSIZE)
+	#colors interface
+    	x1 = int(capturingBGregionX * frame.shape[1])
+	frame = cv2.rectangle(frame, (x1, 50), (x1+40, 70), white, -1)
+	frame = cv2.putText(frame, "Clear ", (x1 + 13, 69), cv2.FONT_HERSHEY_PLAIN, 0.9, black, 3, cv2.LINE_AA)
+
+	frame = cv2.rectangle(frame, (x1 + 50, 50), (x1 + 100, 70), colors[0], -1)
+	frame = cv2.rectangle(frame, (x1 + 110, 50), (x1 + 160, 70), colors[1], -1)
+	frame = cv2.rectangle(frame, (x1 + 170, 50), (x1 + 220, 70), colors[2], -1)
+	frame = cv2.rectangle(frame, (x1 + 230, 50), (x1 + 280, 70), colors[3], -1)
+	# Aligning the point from the mask with thenactual video capture
+	center = (X + int(capturingBGregionX * frame.shape[1]), Y + 10)
+
 
 	
 
