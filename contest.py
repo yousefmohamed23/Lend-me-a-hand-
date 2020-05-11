@@ -18,18 +18,18 @@ def calculateFingers(res, drawing):
 		
             count = 0
 	
-        for i in range(defects.shape[0]):  # calculate the angle
-            s, e, f, d = defects[i][0]
-            start = tuple(res[s][0])
-            end = tuple(res[e][0])
-            far = tuple(res[f][0])
-	    a = math.sqrt((end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2)
-            b = math.sqrt((far[0] - start[0]) ** 2 + (far[1] - start[1]) ** 2)
-            c = math.sqrt((end[0] - far[0]) ** 2 + (end[1] - far[1]) ** 2)
-            angle = math.acos((b ** 2 + c ** 2 - a ** 2) / (2 * b * c))  # cosine theorem
-            if angle <= math.pi / 2:  # angle less than 90 degree, treat as fingers
-                count += 1
-		cv2.circle(drawing, far, 8, [211, 84, 0], -1)
+            for i in range(defects.shape[0]):  # calculate the angle
+                s, e, f, d = defects[i][0]
+                start = tuple(res[s][0])
+                end = tuple(res[e][0])
+                far = tuple(res[f][0])
+                a = math.sqrt((end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2)
+                b = math.sqrt((far[0] - start[0]) ** 2 + (far[1] - start[1]) ** 2)
+                c = math.sqrt((end[0] - far[0]) ** 2 + (end[1] - far[1]) ** 2)
+                angle = math.acos((b ** 2 + c ** 2 - a ** 2) / (2 * b * c))  # cosine theorem
+                if angle <= math.pi / 2:  # angle less than 90 degree, treat as fingers
+                    count += 1
+            	cv2.circle(drawing, far, 8, [211, 84, 0], -1)
         return True, count
     return False, 0
 
@@ -138,9 +138,38 @@ cv2.createTrackbar('trh1', 'trackbar', threshold, 100, printThreshold)
                         colorIndex = 2  # Red
                     elif x1 + 230 <= center[0] <= x1 + 280:
                         colorIndex = 3  # Yellow           
+	        else:
+		    if colorIndex == 0:
+                         bpoints[bindex].appendleft(center)
+                    elif colorIndex == 1:
+                         gpoints[gindex].appendleft(center)
+                    elif colorIndex == 2:
+                         rpoints[rindex].appendleft(center)
+                    elif colorIndex == 3:
+                         ypoints[yindex].appendleft(center)
+		     	
+	else:
+	     bpoints.append(deque(maxlen=512))
+	     bindex += 1
+	     gpoints.append(deque(maxlen=512))
+	     gindex += 1
+	     rpoints.append(deque(maxlen=512))
+             rindex += 1
+	     ypoints.append(deque(maxlen=512))
+             yindex += 1
+     	
+	painter = cv2.circle(frame, (X + int(capturingBGregionX * frame.shape[1]), Y + 10), 10, (255, 255, 255),2)
+	points = [bpoints, gpoints, rpoints, ypoints]
+        for i in range(len(points)):
+            for j in range(len(points[i])):
+                for k in range(1, len(points[i][j])):
+                    if points[i][j][k - 1] is None or points[i][j][k] is None:
+                       continue
+                    cv2.line(painter, points[i][j][k - 1], points[i][j][k], colors[i], 5)
+                    cv2.line(paintWindow, points[i][j][k - 1], points[i][j][k], colors[i], 2)
 
-
-	
+        cv2.imshow('frame', painter)
+        cv2.imshow("Paint", paintWindow)
 
 	#driver function
 
