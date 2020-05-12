@@ -89,7 +89,7 @@ def draw():
             cv2.rectangle(frame, (int(0.5* frame.shape[1]), 0), (frame.shape[1], int(frame.shape[0])), (255, 0, 0), 2)
 
             if isBgCaptured == 0:
-                cv2.imshow('background capture', frame)
+                cv2.namedWindow('background capture', cv2.WINDOW_NORMAL)
                 cv2.resizeWindow('background capture',1080,720)
                 cv2.imshow('background capture', frame)
                 
