@@ -34,13 +34,14 @@ def draw():
     
     # Function to remove background
     def removeBG(image):
-        fgmask = bgModel.apply(image, learningRate=0)
+        fgmask = bgModel.apply(image, learningRate=0)  #apply the model which subtracts the background
         kernel = np.ones((3, 3), np.uint8)
         fgmask = cv2.erode(fgmask, kernel, iterations=1)
-        res = cv2.bitwise_and(image, image, mask=fgmask)
+        res = cv2.bitwise_and(image, image, mask=fgmask) #the output here will be any object added infront of the background
         return res
 
     # Function to draw contours of fingers and count them
+    #The counting is done by calculating the number of defects in the contour + 1 which is the spacing between the fingers
     def calculateFingers(res, drawing):
        #  convexity defect
         hull = cv2.convexHull(res, returnPoints=False)
@@ -84,6 +85,7 @@ def draw():
             orignal = cv2.flip(orignal,1)
             frame = cv2.flip(frame, 1)  
             
+            #this is the blue frame in which the operations occur and the background is captured
             cv2.rectangle(frame, (int(0.5* frame.shape[1]), 0), (frame.shape[1], int(frame.shape[0])), (255, 0, 0), 2)
 
             if isBgCaptured == 0:
@@ -92,17 +94,20 @@ def draw():
 
                 # Applying operations on captured frame to get hand
                 img = removeBG(frame)
-                img = img[0:int(frame.shape[0]),int(0.5* frame.shape[1]):frame.shape[1]]  # clip the ROI
-                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                img = img[0:int(frame.shape[0]),int(0.5* frame.shape[1]):frame.shape[1]]  # clip the image
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  #convert to greyscale
                 blur = cv2.GaussianBlur(gray, (41,41), 0)
-                ret, thresh = cv2.threshold(blur, 20, 255, cv2.THRESH_BINARY)
+                ret, thresh = cv2.threshold(blur, 20, 255, cv2.THRESH_BINARY)  #apply thresholding, the output is a B&W frame of the hand
+                
+                #We detect the fingertip by detecting the highest white pixel in the image's y-axis
                 if cv2.countNonZero(thresh) != 0:
                     nz = np.argwhere(thresh)
                     Y, X = nz[0]
-                    y, x = np.argwhere(nz > 128)[0]
+                    y, x = np.argwhere(nz > 128)[0]   #returns the coordinates of the first white pixel (fingertip)
                     highest_point_image = cv2.circle(thresh, (X, Y), 5, white, -1)
                     
-                thresh1 = copy.deepcopy(thresh)
+                    
+                thresh1 = copy.deepcopy(thresh) #creates a new instance of the image for applying contours
             
                 # Getting contours of hand
                 _, contours, hierarchy = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -130,8 +135,10 @@ def draw():
                 paintWindow = np.zeros((471, 636, 3)) + 255
                 cv2.namedWindow('Paint', cv2.WINDOW_AUTOSIZE)
                 #colors interface
-                # x1 stands for start of drawinf frame
+                # x1 stands for start of drawing frame
                 x1 = int(0.5* frame.shape[1])
+                
+                #The following are the boxes which indicate the colour and CLEAR
                 frame = cv2.rectangle(frame, (x1, 50), (x1+40, 70), white, -1)
                 frame = cv2.putText(frame, "Clear ", (x1 + 13, 69), cv2.FONT_HERSHEY_PLAIN, 0.9, black, 3, cv2.LINE_AA)
 
@@ -159,7 +166,7 @@ def draw():
                                 gindex = 0
                                 rindex = 0
                                 yindex = 0
-                            # colors area
+                            # colors area, maps the location of the points from the frame to the whole image
                             elif x1 + 50 <= center[0] <= x1 + 100:
                                 colorIndex = 0  # Blue
                             elif x1 + 110 <= center[0] <= x1 + 160:
@@ -188,8 +195,10 @@ def draw():
                      ypoints.append(deque(maxlen=512))
                      yindex += 1
                 
-                painter = cv2.circle(frame, (X + int(0.5* frame.shape[1]), Y + 10), 10, (255, 255, 255),2)
-                points = [bpoints, gpoints, rpoints, ypoints]
+                painter = cv2.circle(frame, (X + int(0.5* frame.shape[1]), Y + 10), 10, (255, 255, 255),2)  #the circle which indicates the fingertip
+                points = [bpoints, gpoints, rpoints, ypoints]  #the coordinates of the fingertip in each colour
+                
+                #the drawing function
                 for i in range(len(points)):
                     for j in range(len(points[i])):
                         for k in range(1, len(points[i][j])):
@@ -231,7 +240,7 @@ def draw():
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
-
+        # The GUI settings
         self.setWindowTitle("Lend Me a Hand")
         self.setGeometry(100,100,500,500)
         self.setFixedSize(500,500)
