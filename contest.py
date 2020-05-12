@@ -70,7 +70,7 @@ def draw():
     camera = cv2.VideoCapture(0)
     camera.set(10, 250)
     global path
-    path = path+"/"+name+".mp4"
+    path = path+"/"+name+".avi"
     vid_cod = cv2.VideoWriter_fourcc(*'XVID')
     out = cv2.VideoWriter(path, vid_cod, 17.0, (640, 480))
             
@@ -90,6 +90,9 @@ def draw():
 
             if isBgCaptured == 0:
                 cv2.imshow('background capture', frame)
+                cv2.resizeWindow('background capture',1080,720)
+                cv2.imshow('background capture', frame)
+                
             if isBgCaptured == 1:  # this part wont run until background captured
 
                 # Applying operations on captured frame to get hand
@@ -207,7 +210,8 @@ def draw():
                             cv2.line(orignal, points[i][j][k - 1], points[i][j][k], colors[i], 5)
                             cv2.line(painter, points[i][j][k - 1], points[i][j][k], colors[i], 5)
                             cv2.line(paintWindow, points[i][j][k - 1], points[i][j][k], colors[i], 5)
-
+                cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
+                cv2.resizeWindow('frame',1080,720)
                 cv2.imshow('frame', painter)
                 cv2.imshow("Paint", paintWindow)
                 out.write(orignal)
